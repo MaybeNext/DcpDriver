@@ -1,0 +1,43 @@
+Microsoft (R) Build Engine version 4.0.30319.17929
+[Microsoft .NET Framework, version 4.0.30319.17929]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 2013/7/15 13:33:03.
+Project "D:\work\dcp\HdmiCard\HdmiCard.vcxproj" on node 1 (build target(s)).
+InitializeBuildStatus:
+  Creating "Win7Release\x64\HdmiCard.unsuccessfulbuild" because "AlwaysCreate" was specified.
+Converted Target 0:
+  File .\Win7Release\x64\\HdmiCard.inf is up-to-date
+Run_Wpp:
+  "C:\Program Files (x86)\Windows Kits\8.0\\bin\x86\tracewpp.exe"  Win7Release\x64\\precomp_src.c HdmiCard.rc            HdmiCard.c             Init.c                IsrDpc.c              Write.c      	 DeviceCtr.c                                       -km                                              -func:TraceEvents(LEVEL,FLAGS,MSG,...)           -gen:{km-WdfDefault.tpl}*.tmh -cfgdir:"C:\Program Files (x86)\Windows Kits\8.0\\bin\WppConfig\rev1" -odir:"D:\work\dcp\HdmiCard\Win7Release\x64"
+ClCompile:
+  C:\Program Files (x86)\Windows Kits\8.0\TOOLS\SDV\\bin\interceptor\CL.exe /c /ID:\work\dcp\HdmiCard /IWin7Release\x64\ /Zi /nologo /W3 /WX /Ox /Os /Oy- /D _WIN64 /D _AMD64_ /D AMD64 /D WIN32_LEAN_AND_MEAN=1 /D _WIN32_WINNT=0x0601 /D WINVER=0x0601 /D WINNT=1 /D NTDDI_VERSION=0x06010000 /GF /Gm- /Zp8 /GS /Gy /fp:precise /Zc:wchar_t- /Zc:forScope- /GR- /Yc"precomp.h" /Fp"Win7Release\x64\\precomp.pch" /Fo"Win7Release\x64\\" /Fd"Win7Release\x64\vc110.pdb" /Gz /wd4603 /wd4627 /wd4986 /wd4987 /wd4996 /FI"C:\Program Files (x86)\Windows Kits\8.0\Include\Shared\warning.h" /errorReport:queue  /kernel -cbstring -d2epilogunwind /d1import_no_registry /d2AllowCompatibleILVersions /d2Zi+  Win7Release\x64\\precomp_src.c
+  precomp_src.c
+  C:\Program Files (x86)\Windows Kits\8.0\TOOLS\SDV\\bin\interceptor\CL.exe /c /ID:\work\dcp\HdmiCard /IWin7Release\x64\ /Zi /nologo /W3 /WX /Ox /Os /Oy- /D _WIN64 /D _AMD64_ /D AMD64 /D WIN32_LEAN_AND_MEAN=1 /D _WIN32_WINNT=0x0601 /D WINVER=0x0601 /D WINNT=1 /D NTDDI_VERSION=0x06010000 /D KMDF_VERSION_MAJOR=1 /D KMDF_VERSION_MINOR=11 /GF /Gm- /Zp8 /GS /Gy /fp:precise /Zc:wchar_t- /Zc:forScope- /GR- /Yu"precomp.h" /Fp"Win7Release\x64\\precomp.pch" /Fo"Win7Release\x64\\" /Fd"Win7Release\x64\vc110.pdb" /Gz /wd4603 /wd4627 /wd4986 /wd4987 /wd4996 /FI"C:\Program Files (x86)\Windows Kits\8.0\Include\Shared\warning.h" /errorReport:queue  /kernel -cbstring -d2epilogunwind /d1import_no_registry /d2AllowCompatibleILVersions /d2Zi+  hdmicard.c init.c isrdpc.c write.c devicectr.c
+  hdmicard.c
+  init.c
+  isrdpc.c
+  write.c
+  devicectr.c
+  Generating Code...
+ResourceCompile:
+  C:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe /D _WIN64 /D _AMD64_=1 /D AMD64 /D WIN32_LEAN_AND_MEAN=1 /D _WIN32_WINNT=0x0601 /D WINVER=0x0601 /D WINNT=1 /D NTDDI_VERSION=0x06010000 /l"0x0409" /I"C:\Program Files (x86)\Windows Kits\8.0\Include\UM" /IWin7Release\x64\ /nologo /fo"Win7Release\x64\hdmicard.res"   hdmicard.rc 
+Link:
+  C:\Program Files (x86)\Windows Kits\8.0\TOOLS\SDV\\bin\interceptor\link.exe /ERRORREPORT:QUEUE /OUT:"Win7Release\x64\HdmiCard.sys" /VERSION:"6.2" /INCREMENTAL:NO /NOLOGO /WX /FUNCTIONPADMIN:6 /SECTION:"INIT,d" "c:\program files (x86)\windows kits\8.0\lib\win7\km\x64\ntstrsafe.lib" "C:\Program Files (x86)\Windows Kits\8.0\lib\win7\KM\x64\hotpatch.obj" "C:\Program Files (x86)\Windows Kits\8.0\lib\win7\KM\x64\BufferOverflowK.lib" "C:\Program Files (x86)\Windows Kits\8.0\lib\win7\KM\x64\ntoskrnl.lib" "C:\Program Files (x86)\Windows Kits\8.0\lib\win7\KM\x64\hal.lib" "C:\Program Files (x86)\Windows Kits\8.0\lib\win7\KM\x64\wmilib.lib" "C:\Program Files (x86)\Windows Kits\8.0\lib\wdf\kmdf\x64\1.11\WdfLdr.lib" "C:\Program Files (x86)\Windows Kits\8.0\lib\wdf\kmdf\x64\1.11\WdfDriverEntry.lib" /NODEFAULTLIB /MANIFEST:NO /DEBUG /PDB:"Win7Release\x64\HdmiCard.pdb" /SUBSYSTEM:NATIVE,"6.01" /Driver /OPT:REF /OPT:ICF /ENTRY:"FxDriverEntry" /RELEASE /IMPLIB:"Win7Release\x64\HdmiCard.lib" /MERGE:"_TEXT=.text;_PAGE=PAGE" /MACHINE:X64 /kernel /IGNORE:4198,4010,4037,4039,4065,4070,4078,4087,4089,4221,4108,4088,4218,4218,4235 /osversion:6.2 /pdbcompress /debugtype:pdata  Win7Release\x64\hdmicard.res
+  Win7Release\x64\hdmicard.obj
+  Win7Release\x64\init.obj
+  Win7Release\x64\isrdpc.obj
+  Win7Release\x64\write.obj
+  Win7Release\x64\devicectr.obj
+  Win7Release\x64\precomp_src.obj
+  HdmiCard.vcxproj -> D:\work\dcp\HdmiCard\Win7Release\x64\HdmiCard.sys
+FinalizeBuildStatus:
+  Deleting file "Win7Release\x64\HdmiCard.unsuccessfulbuild".
+  Touching "Win7Release\x64\HdmiCard.lastbuildstate".
+Done Building Project "D:\work\dcp\HdmiCard\HdmiCard.vcxproj" (build target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:04.96

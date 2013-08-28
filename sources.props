@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TARGETNAME Condition="'$(OVERRIDE_TARGETNAME)'!='true'">HdmiCard</TARGETNAME>
+    <TARGETTYPE Condition="'$(OVERRIDE_TARGETTYPE)'!='true'">DRIVER</TARGETTYPE>
+    <KMDF_VERSION_MAJOR Condition="'$(OVERRIDE_KMDF_VERSION_MAJOR)'!='true'">1</KMDF_VERSION_MAJOR>
+    <INF_NAME Condition="'$(OVERRIDE_INF_NAME)'!='true'">HdmiCard</INF_NAME>
+    <NTTARGETFILE0 Condition="'$(OVERRIDE_NTTARGETFILE0)'!='true'">$(OBJ_PATH)\$(O)\$(INF_NAME).inf</NTTARGETFILE0>
+    <PASS0_BINPLACE Condition="'$(OVERRIDE_PASS0_BINPLACE)'!='true'">$(NTTARGETFILE0)</PASS0_BINPLACE>
+    <TARGETLIBS Condition="'$(OVERRIDE_TARGETLIBS)'!='true'">$(TARGETLIBS)             $(DDK_LIB_PATH)\ntstrsafe.lib</TARGETLIBS>
+    <PRECOMPILED_INCLUDE Condition="'$(OVERRIDE_PRECOMPILED_INCLUDE)'!='true'">precomp.h</PRECOMPILED_INCLUDE>
+    <PRECOMPILED_PCH Condition="'$(OVERRIDE_PRECOMPILED_PCH)'!='true'">precomp.pch</PRECOMPILED_PCH>
+    <PRECOMPILED_OBJ Condition="'$(OVERRIDE_PRECOMPILED_OBJ)'!='true'">precomp.obj</PRECOMPILED_OBJ>
+    <SOURCES Condition="'$(OVERRIDE_SOURCES)'!='true'">HdmiCard.rc            HdmiCard.c             Init.c                IsrDpc.c              Write.c      	 DeviceCtr.c</SOURCES>
+    <RUN_WPP Condition="'$(OVERRIDE_RUN_WPP)'!='true'">$(SOURCES)                                       -km                                              -func:TraceEvents(LEVEL,FLAGS,MSG,...)           -gen:{km-WdfDefault.tpl}*.tmh</RUN_WPP>
+    <TARGET_DESTINATION Condition="'$(OVERRIDE_TARGET_DESTINATION)'!='true'">wdf</TARGET_DESTINATION>
+    <ALLOW_DATE_TIME Condition="'$(OVERRIDE_ALLOW_DATE_TIME)'!='true'">1</ALLOW_DATE_TIME>
+  </PropertyGroup>
+  <ItemGroup>
+    <InvokedTargetsList Include="$(OBJ_PATH)\$(O)\$(INF_NAME).inf">
+      <Pass>0</Pass>
+      <Condition>
+      </Condition>
+    </InvokedTargetsList>
+  </ItemGroup>
+</Project>

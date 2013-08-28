@@ -1,0 +1,115 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+;   KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+;   IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+;   PURPOSE.
+;
+;Module Name:
+;
+;    HdmiCard.INF
+;
+;Abstract:
+;    INF file for the HdmiCard driver.
+;
+;--*/
+
+[Version]
+Signature="$CHICAGO$"
+Class=DCP
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%MSFT%
+DriverVer=11/09/2011,1.00.0000
+CatalogFile=KmdfSamples.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=DCPClassReg     
+
+[DCPClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+HKR,,DeviceCharacteristics,0x10001,0x100     ;Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)" ;Allow generic all access to system and built-in Admin. 
+
+
+; ================= Device Install section =====================
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[Manufacturer]
+%MSFT%=MSFT,NT$ARCH$
+
+[SourceDisksFiles]
+HdmiCard.sys=1
+
+[SourceDisksNames]
+1=%DISK_NAME%,
+
+; For XP and later
+[MSFT.NT$ARCH$]
+; DisplayName           Section           DeviceId
+; -----------           -------           --------
+%HdmiCard.DRVDESC%=      HdmiCard_Inst,     PCI\VEN_1172&DEV_E001
+
+[HdmiCard_Inst.NT]
+CopyFiles=HdmiCard.CopyFiles
+
+[HdmiCard.CopyFiles]
+HdmiCard.sys
+
+[HdmiCard_Inst.NT.HW]
+AddReg=HdmiCard_MSI
+
+[HdmiCard_MSI]
+HKR,"Interrupt Management",0x00000010
+HKR,"Interrupt Management\MessageSignaledInterruptProperties",0x00000010
+HKR,"Interrupt Management\MessageSignaledInterruptProperties",MSISupported,0x00010001,1
+
+
+[HdmiCard_Inst.NT.Services]
+AddService=HdmiCard,0x00000002,HdmiCard_Service 
+
+[HdmiCard_Service]
+DisplayName    = %HdmiCard.SVCDESC%                            
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\HdmiCard.sys                            
+AddReg         = HdmiCard_Parameters_AddReg
+
+;-------------- Coinstaller installation
+[DestinationDirs]
+CoInstaller_CopyFiles = 11
+
+[HdmiCard_Inst.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[HdmiCard_Inst.NT.Wdf]
+KmdfService = HdmiCard, HdmiCard_wdfsect
+[HdmiCard_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+MSFT = "DCP"
+ClassName = "DCP Card"
+HdmiCard.SVCDESC = "Driver Service for the DCP Card"
+DISK_NAME = "DCP Card Install Disk"
+HdmiCard.DRVDESC = "DCP HDMI Card"

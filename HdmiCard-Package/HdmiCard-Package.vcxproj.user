@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">
+    <SignMode>TestSign</SignMode>
+    <TestCertificate>CN="WDKTestCert zliu9,130180969615865392" | FBF64EE59F3469B715F97777A86833F29D370E18</TestCertificate>
+  </PropertyGroup>
+</Project>
