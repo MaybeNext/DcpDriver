@@ -25,6 +25,9 @@ Environment:
 #include "Write.tmh"
 
 
+ULONG_PTR pa_buf;
+ULONG     dma_num_buf;
+
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
@@ -62,7 +65,6 @@ Return Value:
     NTSTATUS          status = STATUS_UNSUCCESSFUL;
     PDEVICE_EXTENSION devExt = NULL;
 
-    size_t elength;
 
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_WRITE,
                 "--> HdmiEvtIoWrite: Request %p", Request);
@@ -71,26 +73,25 @@ Return Value:
     // Get the DevExt from the Queue handle
     //
 
-    
+	
     devExt = HdmiGetDeviceContext(WdfIoQueueGetDevice(Queue));
-    devExt->Request = Request;
+		devExt->Request = Request;
     //
     // Validate the Length parameter.
     //
-    if (Length > HDMI_CARD_MAXIMUM_TRANSFER_LENGTH)  {
+    if (Length > HDMI_SRAM_SIZE)  {
         status = STATUS_INVALID_BUFFER_SIZE;
         goto CleanUp;
     }
-
-    if (devExt->DMAcompleted == 7)
-    {
-            devExt->DMAcompleted = 1;
-    }
-    else if (devExt->DMAcompleted == 1)
-    {
-            WdfDmaTransactionDmaCompleted( devExt->WriteDmaTransaction,
-                                                &status );
-    }    
+			if (devExt->DMAcompleted == 7)
+			{
+					devExt->DMAcompleted = 1;
+			}
+			else if (devExt->DMAcompleted == 1)
+			{
+					WdfDmaTransactionDmaCompleted( devExt->WriteDmaTransaction,
+                                                       &status );
+			}    
     //
     // Following code illustrates two different ways of initializing a DMA
     // transaction object. If ASSOC_WRITE_REQUEST_WITH_DMA_TRANSACTION is
@@ -109,6 +110,7 @@ Return Value:
                                            Request,
                                            HdmiEvtProgramWriteDma,
                                            WdfDmaDirectionWriteToDevice );
+
     if(!NT_SUCCESS(status)) {
         TraceEvents(TRACE_LEVEL_ERROR, DBG_WRITE,
                     "WdfDmaTransactionInitializeUsingRequest failed: "
@@ -137,9 +139,9 @@ Return Value:
         PMDL                  mdl;
         PVOID                 virtualAddress;
         ULONG                 length;
-                
-                
-                
+				
+				
+				
         //
         // Initialize this new DmaTransaction with direct parameters.
         //
@@ -192,15 +194,14 @@ Return Value:
         }
 #endif
 
-    
+	
 
     //
     // Execute this DmaTransaction transaction.
     //
-
     status = WdfDmaTransactionExecute( devExt->WriteDmaTransaction, 
                                        WDF_NO_CONTEXT);
-elength = WdfDmaTransactionGetCurrentDmaTransferLength( devExt->WriteDmaTransaction );
+
 
     if(!NT_SUCCESS(status)) {
 
@@ -280,7 +281,7 @@ Return Value:
     // Get the number of bytes as the offset to the beginning of this
     // Dma operations transfer location in the buffer.
     //
-    // offset = WdfDmaTransactionGetBytesTransferred(Transaction);
+     offset = WdfDmaTransactionGetBytesTransferred(Transaction);
 
 
 
@@ -290,8 +291,11 @@ Return Value:
         //
         dteVA = (PDMA_TRANSFER_ELEMENT) devExt->WriteCommonBuffer1Base + 16;
         dteLA = (((ULONG_PTR)devExt->WriteCommonBuffer1BaseLA.HighPart << 32) | devExt->WriteCommonBuffer1BaseLA.LowPart);
-        devExt->CommonBufferPA = dteLA;
-        devExt->DmaNumber = SgList->NumberOfElements;
+		 devExt->CommonBufferPA = dteLA;
+		 devExt->DmaNumber = SgList->NumberOfElements;
+		 
+		pa_buf = dteLA;
+		dma_num_buf = SgList->NumberOfElements;
 
         for (i=0; i < SgList->NumberOfElements; i++) 
         {
@@ -330,10 +334,10 @@ Return Value:
            // dteLA += sizeof(DMA_TRANSFER_ELEMENT);
         }
 
-    //WdfRequestMarkCancelable(devExt->Request, HdmiEvtRequestCancel);
-    
-    WdfInterruptAcquireLock( devExt->Interrupt );
-        
+	//WdfRequestMarkCancelable(devExt->Request, HdmiEvtRequestCancel);
+	
+		WdfInterruptAcquireLock( devExt->Interrupt );
+		
     WRITE_REGISTER_ULONG( (PULONG)&devExt->Regs->WriteCtr.CtrBit,
             0xffffffff );
 
@@ -348,8 +352,8 @@ Return Value:
  
     WRITE_REGISTER_ULONG( (PULONG) &devExt->Regs->WriteCtr.LastDesc,
                             SgList->NumberOfElements - 1 );
-    
-    WdfInterruptReleaseLock( devExt->Interrupt );
+	
+		WdfInterruptReleaseLock( devExt->Interrupt );
     //
     // NOTE: This shows how to process errors which occur in the
     //       PFN_WDF_PROGRAM_DMA function in general.
@@ -439,24 +443,24 @@ Return Value:
 
 /*void HdmiEvtRequestCancel(IN WDFREQUEST Request)
 {
-    WDFDEVICE    device;
+	WDFDEVICE	device;
     NTSTATUS            status;
     PDEVICE_EXTENSION   devExt;
     WDFDMATRANSACTION   dmaTransaction;
-    BOOLEAN transactionComplete;
+	BOOLEAN transactionComplete;
 
-    device = WdfIoQueueGetDevice(WdfRequestGetIoQueue(Request));
-    devExt = HdmiGetDeviceContext(device);
+	device = WdfIoQueueGetDevice(WdfRequestGetIoQueue(Request));
+	devExt = HdmiGetDeviceContext(device);
 
-    WdfRequestUnmarkCancelable(Request);
+	WdfRequestUnmarkCancelable(Request);
 
-    transactionComplete = WdfDmaTransactionDmaCompleted( devExt->WriteDmaTransaction,
-                                                         &status );    
-    if (transactionComplete)
-    {
-        WdfDmaTransactionRelease(devExt->WriteDmaTransaction);        
+	transactionComplete = WdfDmaTransactionDmaCompleted( devExt->WriteDmaTransaction,
+                                                         &status );	
+	if (transactionComplete)
+	{
+    	WdfDmaTransactionRelease(devExt->WriteDmaTransaction);        
 
-        WdfRequestCompleteWithInformation( Request, STATUS_CANCELLED, 0);
-    }
+	    WdfRequestCompleteWithInformation( Request, STATUS_CANCELLED, 0);
+	}
 }
 */
