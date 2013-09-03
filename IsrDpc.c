@@ -160,6 +160,7 @@ Return Value:
     WDFDMATRANSACTION   dmaTransaction;
     BOOLEAN transactionComplete;
     size_t length;
+//    PDMA_TRANSFER_ELEMENT  dteVA;
 
     UNREFERENCED_PARAMETER(Device);
 
@@ -169,63 +170,40 @@ Return Value:
     
 		dmaTransaction = devExt->WriteDmaTransaction;
 
-     length = WdfDmaTransactionGetCurrentDmaTransferLength( dmaTransaction );
-
-     if ((length == 0) && (devExt->DMAcompleted == 7))
-     	{
-     		return;
-     	}
-
-	/* if (length == 0)
-	 {
-		WdfDmaTransactionDmaCompletedWithLength( dmaTransaction,
-                                                                   length,
-                                                                   &status );	 
-	 	HdmiWriteRequestComplete( dmaTransaction, status );
-		devExt->DMAcompleted = 0;
-		return;
- 	}*/
-   
-    /*transactionComplete = WdfDmaTransactionDmaCompletedWithLength( dmaTransaction,
-                                                                   devExt->PerDma[devExt->PerDmaCurrent-1].ByteCnt,
-                                                                   &status );
-    */
-
-	//WdfRequestMarkCancelable(devExt->Request, HdmiEvtRequestCancel);
-		
-    /*WRITE_REGISTER_ULONG( (PULONG)&devExt->Regs->WriteCtr.CtrBit,
-            0xffffffff );
-
-    WRITE_REGISTER_ULONG( (PULONG)&devExt->Regs->WriteCtr.CtrBit,
-                            0x00000 | devExt->DmaNumber );
-  
-    WRITE_REGISTER_ULONG( (PULONG) &devExt->Regs->WriteCtr.DescTableAddressHigh,
-                            devExt->CommonBufferPA >> 32 );
- 
-    WRITE_REGISTER_ULONG( (PULONG) &devExt->Regs->WriteCtr.DescTableAddressLow,
-                            devExt->CommonBufferPA & 0xffffffff );
- 
-    WRITE_REGISTER_ULONG( (PULONG) &devExt->Regs->WriteCtr.LastDesc,
-                            devExt->DmaNumber - 1 );*/
-
-
-	transactionComplete = WdfDmaTransactionDmaCompleted( dmaTransaction,
-                                                         &status );	
-    if (transactionComplete) 
-    {
-          //
-          // Complete this DmaTransaction.
-          //
-          TraceEvents(TRACE_LEVEL_INFORMATION, DBG_DPC,
-                                   "Completing Write request in the DpcForIsr");
-
+		length = WdfDmaTransactionGetCurrentDmaTransferLength( dmaTransaction );
+//		dteVA = (PDMA_TRANSFER_ELEMENT) devExt->WriteCommonBuffer1Base + 16;
+		if (length != 0xE10000)
+			{
+				transactionComplete = WdfDmaTransactionDmaCompletedFinal(dmaTransaction,
+																							length,
+                                     					&status);	 
+			}
+		else
+			{
+	       	/* while((dteVA->DescPtr & 0x40000000) == 0) {
+	            length -= ((dteVA->DescPtr & 0xFFFFFF) << 2);
+	            dteVA++;
+	        }
+	        length -= ((dteVA->DescPtr & 0xFFFFFF) << 2);*/
+				transactionComplete = WdfDmaTransactionDmaCompletedWithLength(dmaTransaction,
+																																				length,
+					                                                     					&status);	
+				/*	transactionComplete = WdfDmaTransactionDmaCompleted( dmaTransaction,
+                                                         &status );       */                        
+			}
+		if (transactionComplete) 
+			{
+					//
+					// Complete this DmaTransaction.
+					//
+					TraceEvents(TRACE_LEVEL_INFORMATION, DBG_DPC,
+					                         "Completing Write request in the DpcForIsr");
+					
+					
+					HdmiWriteRequestComplete( dmaTransaction, status ); 
+					devExt->DMAcompleted = 7;
 			
-			HdmiWriteRequestComplete( dmaTransaction, status );
-	devExt->DMAcompleted = 7;
-
-    }
-   
-    
+			}			
     
     TraceEvents(TRACE_LEVEL_INFORMATION, DBG_DPC, "<-- EvtInterruptDpc");
 
